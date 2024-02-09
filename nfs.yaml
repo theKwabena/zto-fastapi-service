@@ -1,0 +1,14 @@
+services:
+  mail-nfs:
+    image: itsthenetwork/nfs-server-alpine
+    hostname: mail-nfs
+    container_name: mail-nfs
+    ports:
+      - 2049:2049
+    volumes:
+      - mail-nfs:/nfsshare
+    privileged: true
+    environment:
+      - SHARED_DIRECTORY=/nfsshare
+volumes:
+  mail-nfs:
