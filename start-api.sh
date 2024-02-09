@@ -48,6 +48,6 @@ fi
 echo "---------- STARTING MIGRATE-CLIENT-PYTHON-WEB-API ----------"
 
 echo "Neo4knust!" | docker login dreg.knust.edu.gh -u neo --password-stdin
-docker compose -f prod.yaml up --detach
+docker compose -f prod.yaml up --build --detach
 
 
