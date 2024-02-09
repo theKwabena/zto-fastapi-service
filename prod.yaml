@@ -1,0 +1,34 @@
+services:
+  mail-exporter:
+    image: ${APP_IMAGE}
+    hostname: mail-export
+    container_name: mail-export
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/home/app
+      - /mnt/mailboxes:/home/data/
+
+  mail-redis:
+    image: redis
+    container_name: mail-redis
+    hostname: mail-redis
+    volumes:
+      - redis-data:/data
+    ports:
+      - 6379:6379
+
+  mail-rabbit-mq:
+    image: rabbitmq:latest
+    container_name: mail-rabbitmq
+    hostname: mail-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=mailexport
+      - RABBITMQ_DEFAULT_PASS=m@ilexp0rt
+    ports:
+      - 5672:5672
+
+volumes:
+  redis-data:
+
+
