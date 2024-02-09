@@ -45,7 +45,7 @@ pipeline {
                     sshagent(['ubuntu']){
                         dockerLogin ("knust-docker-registry", "https://dreg.knust.edu.gh")
                         sh "scp start-api.sh ${testServer}:/home/ubuntu/"
-                        sh "scp local.yaml ${testServer}:/home/ubuntu/"
+                        sh "scp prod.yaml ${testServer}:/home/ubuntu/"
                         sh "ssh -o StrictHostKeyChecking=no ${testServer} ${scriptCmd}"
                     }
                 }
