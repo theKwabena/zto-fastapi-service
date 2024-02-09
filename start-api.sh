@@ -36,7 +36,7 @@ else
     echo "............ATTEMPTING TO MOUNT NFS SHARE............"
     sudo mount $NFS_SERVER:$NFS_SHARE $MOUNT_POINT
     if [ $? -eq 0 ]; then
-        echo "NFS share mounted successfully."
+        echo "NFS MOUNTED SUCCESSFULLY"
     else
         echo "Failed to mount NFS share."
         exit 1
