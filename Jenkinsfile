@@ -41,7 +41,7 @@ pipeline {
                 script {
 
                     def scriptCmd = "bash ./start-api.sh $imageTag"
-                    def testServer g= "ubuntu@10.40.1.98"
+                    def testServer = "ubuntu@10.40.1.98"
                     sshagent(['ubuntu']){
                         dockerLogin ("knust-docker-registry", "https://dreg.knust.edu.gh")
                         sh "scp start-api.sh ${testServer}:/home/ubuntu/"
