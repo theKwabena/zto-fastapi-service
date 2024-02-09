@@ -11,7 +11,7 @@ def shouldExecuteOnBranch(branchName) {
     return BRANCH_NAME == branchName
 }
 
-def imageTag = "dreg.knust.edu.gh/neo/migrate-client"
+def imageTag = "dreg.knust.edu.gh/neo/migrate-client:0.0.1"
 pipeline {
     agent any
 
