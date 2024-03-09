@@ -1,13 +1,12 @@
 services:
   mail-exporter:
-    image: ${APP_IMAGE}
+    image: dreg.knust.edu.gh/mi-python:0.0.1
     hostname: mail-export
     container_name: mail-export
     ports:
       - 8000:8000
     volumes:
-      - ./:/home/app
-      - /mnt/mailboxes:/home/data/
+      - /mnt/migrate/mailboxes:/home/data/
 
   mail-redis:
     image: redis

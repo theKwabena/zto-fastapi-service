@@ -23,7 +23,7 @@ MESSAGE_STREAM_RETRY_TIMEOUT = 15000  # milisecond
 # add CORS so our web page can connect to our api
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://10.40.1.98:8081"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,8 +34,8 @@ COUNTER = 0
 
 def get_message(task : Tasks):
     result = {
-        "download" : AsyncResult(task.download_id).state,
-        "extract" : AsyncResult(task.extract_id).state
+        "dt_status" : AsyncResult(task.download_id).state,
+        "et_status" : AsyncResult(task.extract_id).state
     }
     return result
 
@@ -52,21 +52,24 @@ async def message_stream(request: Request, dt_id: str, et_id: str):
             print(task.download_id, task.extract_id)
             status = get_message(task)
             if status:
-                yield {
-                    "event": "new_message",
-                    "id": "message_id",
-                    "retry": MESSAGE_STREAM_RETRY_TIMEOUT,
-                    "data": f"Task status {status}",
-                }
-            else:
-                yield {
-                    "event": "end_event",
-                    "id": "message_id",
-                    "retry": MESSAGE_STREAM_RETRY_TIMEOUT,
-                    "data": "End of the stream",
-                }
+                if ((status['dt_status'] == "SUCCESS" and status['et_status'] == "SUCCESS") or
+                        (status['dt_status'] == "FAILURE" and status['et_status'] == "FAILURE")):
+                    yield {
+                        "event": "end_event",
+                        "id": "message_id",
+                        "retry": MESSAGE_STREAM_RETRY_TIMEOUT,
+                        "data": status,
+                    }
+                    break
+                else:
+                    yield {
+                        "event": "new_message",
+                        "id": "message_id",
+                        "retry": MESSAGE_STREAM_RETRY_TIMEOUT,
+                        "data": status,
+                    }
             await asyncio.sleep(MESSAGE_STREAM_DELAY)
-
+    print("I run here")
     return EventSourceResponse(event_generator())
 
 

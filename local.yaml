@@ -10,15 +10,26 @@ services:
     volumes:
       - ./:/home/app
       - /mnt/mailboxes:/home/data/
+    depends_on:
+      - mail-redis
+      - mail-rabbit-mq
 
   mail-redis:
     image: redis
     container_name: mail-redis
     hostname: mail-redis
     volumes:
-      - redis-data:/data
+      - py-redis-data:/data
     ports:
       - 6379:6379
+  migrate_celery:
+    container_name: celery_worker
+    build: .
+    command: celery -A Celery worker -l info --without-gossip --without-mingle --without-heartbeat -Ofair --pool=solo
+    volumes:
+      - .:/app
+    depends_on:
+      - mail-redis
 
   mail-rabbit-mq:
     image: rabbitmq:latest
@@ -31,6 +42,6 @@ services:
       - 5672:5672
 
 volumes:
-  redis-data:
+  py-redis-data:
 
 

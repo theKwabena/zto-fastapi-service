@@ -1,28 +1,24 @@
 import os
 import requests
 from .customExceptions import CustomHttpException
-
-zimbra_mail = os.getenv("ZIMBRA_MAIL", 'https://mail.knust.edu.gh')
-download_folder = "/home/data/mailbox-downloads"
-mailboxes_folder = os.path.expanduser("/home/data/mailbox-extracts")
+from authentication.schema import User
+from config import settings
 
 
-[os.makedirs(folder, exist_ok=True) for folder in [download_folder, mailboxes_folder]]
+[os.makedirs(folder, exist_ok=True) for folder in [settings.DOWNLOAD_FOLDER, settings.EXTRACTION_FOLDER]]
 
 
-def download_mailbox(*, folder_name: str or None = '', user: dict):
+def download_mailbox(*, folder_name: str or None = '', user: User):
     folder_request = requests.get(
-        f"{zimbra_mail}/home/{user['email']}/{folder_name}?fmt=tgz&auth=sc",
-        auth=(user['email'], user['password']),
+        f"{settings.ZIMBRA_SERVER_URL}/home/{user.username}/{folder_name}/?fmt=tgz&auth=qp&zauthtoken={user.auth_token}",
         allow_redirects=False
     )
-
-    if folder_request.status_code == 200:
+    print(folder_request.url)
+    if folder_request.status_code == 200 or 204:
         folder_file_path = os.path.join(
-            download_folder,
-            f"{user['email']}-{folder_name}.tgz") if folder_name \
-            else os.path.join(download_folder, f"{user['email']}.tgz"
-            )
+            settings.DOWNLOAD_FOLDER,
+            f"{user.username}-{folder_name}.tgz") if folder_name \
+            else os.path.join(settings.DOWNLOAD_FOLDER, f"{user.username}.tgz")
 
         try:
             with open(folder_file_path, 'wb') as file:
